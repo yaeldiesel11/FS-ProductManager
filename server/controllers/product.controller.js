@@ -13,12 +13,26 @@ module.exports = {
         return Product
             .find()
             .then((products) => {
+                console.log(products)
                 return res
                     .status(200)
                     .json(products)
             })
             .catch((error) => {
-                return handleError(res, error);
+                handleError(res, error);
+            });
+    },
+    //show a product detail
+    oneProduct: (req, res) => {
+        return Product
+            .findOne({ _id: req.params.id })
+            .then((product) => {
+                return res
+                    .status(200)
+                    .json(product)
+            })
+            .catch((error) => {
+                handleError(res, error);
             });
     },
     //adding a new product
@@ -49,7 +63,7 @@ module.exports = {
                 .status(201)
                 .json({ message: "Product added: ", product }))
             .catch((error) => {
-                return handleError(res, error);
+                handleError(res, error);
             });
     }
 }
