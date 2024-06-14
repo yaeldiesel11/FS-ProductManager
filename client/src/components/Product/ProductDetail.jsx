@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
-import { useParams } from "react-router-dom";
+import React, { useEffect, useState } from "react"
+import axios from "axios"
+import { useParams } from "react-router-dom"
+import { Link } from "react-router-dom"
+import ProductDelete from "./ProductDelete"
 
-const ProductDetail = (props) => {
+const ProductDetail = ({ deleteProduct }) => {
     const [product, setProduct] = useState({})
-    let { id } = useParams()
+    const { id } = useParams()
 
     useEffect(() => {
         axios
@@ -22,6 +24,12 @@ const ProductDetail = (props) => {
             <h2>{product.title}</h2>
             <p>Price: {product.price}</p>
             <p>Description: {product.description}</p>
+            <Link to={`/api/${id}/edit`}>
+                <button> Update product </button>
+            </Link>
+            <Link to="/">
+                <ProductDelete id={id} deleteProduct={deleteProduct} />
+            </Link>
         </div>
     )
 }

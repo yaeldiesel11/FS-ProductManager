@@ -5,23 +5,45 @@ import { Routes, Route, Link } from 'react-router-dom';
 import ProductForm from '../Product/ProductForm';
 import ProductList from '../Product/ProductList';
 import ProductDetail from '../Product/ProductDetail';
+import ProductUpdate from '../Product/ProductUpdate';
 
 const App = () => {
 
   const [products, setProducts] = useState([]);
-  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     axios
       .get('http://localhost:8080')
       .then((res) => {
         setProducts(res.data)
-        setLoaded(true)
       })
       .catch((error) => {
         console.log('Something wrong happened: ', error)
       })
   }, [])
+
+  const addNewProduct = (newProduct) => {
+    console.log(newProduct)
+    setProducts([...products, newProduct])
+  }
+
+  const updateProduct = (dataProduct) => {
+    const { id } = dataProduct
+    const { updatedProduct } = dataProduct
+    let index = products.findIndex((product) => product._id === id)
+    let productList = [...products]
+    productList[index].title = updatedProduct.title
+    productList[index].price = updatedProduct.price
+    productList[index].description = updatedProduct.description
+    setProducts([...productList])
+  }
+
+  const deleteProduct = (id) => {
+    let index = products.findIndex((product) => product._id === id)
+    let productList = [...products]
+    productList.splice(index, 1)
+    setProducts([...productList])
+  }
 
   return (
     <div className="App">
@@ -30,10 +52,11 @@ const App = () => {
       <Routes>
         <Route path="" element={
           <>
-            <ProductForm />
-            <ProductList products={products} />
+            <ProductForm addNewProduct={addNewProduct} />
+            <ProductList products={products} deleteProduct={deleteProduct} />
           </>} />
-        <Route path='/api/:id' element={<ProductDetail />} />
+        <Route path='/api/:id' element={<ProductDetail deleteProduct={deleteProduct} />} />
+        <Route path='/api/:id/edit' element={<ProductUpdate updateProduct={updateProduct} />} />
       </Routes>
     </div>
   );
